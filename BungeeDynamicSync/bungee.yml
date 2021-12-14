@@ -1,0 +1,5 @@
+name: BungeeDynamicSync
+main: org.skunion.smallru8.BungeeDynamicSync.BungeeDynamicSync
+version: 1.0
+author: smallru8
+depends: [RedisBungee]
