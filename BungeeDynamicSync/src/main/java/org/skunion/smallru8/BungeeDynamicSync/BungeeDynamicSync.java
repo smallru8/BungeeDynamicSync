@@ -28,7 +28,7 @@ public class BungeeDynamicSync extends Plugin{
 		setMasterController();
 		jobClock = new Clock();
 		jobClock.start();//Auto update current controller
-		
+		//getProxy().getServers(); TODO
 	}
 	
 	@Override
