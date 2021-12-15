@@ -12,7 +12,7 @@ public class MessageHandle implements Listener{
 	 * Add a server from portainer and list                          | PORTAINER  | ADD      | <dynamic server> | TODO 30秒測一次,由Master controller添加後發出，讓其他proxies同步list
 	 * Delete a server from portainer and list                       | PORTAINER  | DEL      | <dynamic server> | TODO 改成30秒測一次是否已被刪除,不用讓dynamic server自己回報
 	 * TODO 透過plugin message channel 發送dynamic server list同步給hub server
-	 * 
+	 * TODO dynamic server開始後啟動白名單
 	 * */
 	
 	
