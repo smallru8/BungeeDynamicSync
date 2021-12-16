@@ -1,0 +1,20 @@
+{
+	"Image": "$IMAGE",
+	"ExposedPorts": {
+		"25565/tcp: {}"
+	},
+	"HostConfig": {
+        "PortBindings": {
+			"25565/tcp": [{ "HostPort": "" }]
+		},
+		"AutoRemove": true
+    },
+	"Labels": 
+	{
+		"manager": "BDS",
+		"BDStype": "$TYPE"
+	},
+	"ENV":[
+		"SQL_ACCOUNT=admin","SQL_DB=minecraft","SQL_PASSWD=admin"
+	]
+}

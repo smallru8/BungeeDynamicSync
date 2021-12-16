@@ -64,7 +64,7 @@ public class Config {
 		section1_4.set("username", "portainerUsername");
 		section1_4.set("passwd", "portainerPasswd");
 		section1_4.set("max", 12);
-		section0_2.set("portainer1", section1_4);
+		section0_2.set("portainer2", section1_4);
 	}
 	
 	
