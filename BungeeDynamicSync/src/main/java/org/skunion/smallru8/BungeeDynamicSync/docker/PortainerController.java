@@ -81,7 +81,7 @@ public class PortainerController {
 	public String createContainer(String dynamic_server) {
 		if(!LOCK) {
 			String image = ServerImageMap.DYNAMIC_SERVER_MAP_DOCKER_IMAGE.get(dynamic_server);
-			String labels = "";
+			
 		}
 		
 		return "";
