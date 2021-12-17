@@ -173,14 +173,20 @@ public class EndPointController {
 		    JSONObject detail = getContainerDetailById(id);
 		    if(detail!=null) {
 		    	rets[0] = detail.getJSONObject("Labels").getString("BDStype");
-		    	//IP = endPointHostIP
-		    	//TODO NEXT
+		    	rets[1] = endPointHostIP;
+		    	
+		    	JSONArray ports = detail.getJSONArray("Ports");
+		    	for(int i=0;i<ports.length();i++) {
+		    		if(ports.getJSONObject(i).getInt("PrivatePort")==25565&&ports.getJSONObject(i).getString("Type").equals("tcp")) {
+		    			rets[2] = ""+ports.getJSONObject(i).getInt("PublicPort");
+		    			break;
+		    		}
+		    	}
 		    }
-		    
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+		//Bungeecord use these info to update server list
 		return rets;
 	}
 	
@@ -201,7 +207,6 @@ public class EndPointController {
 			e.printStackTrace();
 		}
 	}
-	
 	
 	private String getCreateJson_RAW(String jsonName) {
 		String ret = "";
