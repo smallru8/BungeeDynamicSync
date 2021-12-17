@@ -1,16 +1,35 @@
 package org.skunion.smallru8.BungeeDynamicSync.docker;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.TimeZone;
 
 import org.json.JSONObject;
+import org.quartz.CronScheduleBuilder;
+import org.quartz.Job;
+import org.quartz.JobBuilder;
+import org.quartz.JobDetail;
+import org.quartz.JobExecutionContext;
+import org.quartz.JobExecutionException;
+import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
+import org.quartz.Trigger;
+import org.quartz.TriggerBuilder;
+import org.quartz.impl.StdSchedulerFactory;
 import org.skunion.smallru8.BungeeDynamicSync.BungeeDynamicSync;
 
 import net.md_5.bungee.config.Configuration;
 
-public class MainController {
+public class MainController implements Job{
 
 	private ArrayList<PortainerAuth> portainers;
 	private ArrayList<EndPointController> endpoints;
+	private Queue<String> waitForCreate = new LinkedList<String>();
+	
+	private Trigger queueProcessTri;
+	private JobDetail qJob;
+	private Scheduler qScheudler;
 	
 	public MainController() {
 		//load data from CONFIG
@@ -42,6 +61,17 @@ public class MainController {
 				endpoints.add(endpoint);
 			});
 		});
+		//10 sec
+		queueProcessTri = TriggerBuilder.newTrigger().withIdentity("CheckProxyStatus").withSchedule(CronScheduleBuilder.cronSchedule("0/10 * * * * ? *").inTimeZone(TimeZone.getTimeZone("Asia/Taipei"))).build();
+		qJob = JobBuilder.newJob(MainController.class).build();
+		
+		try {
+			qScheudler = StdSchedulerFactory.getDefaultScheduler();
+			qScheudler.scheduleJob(qJob, queueProcessTri);
+			qScheudler.start();
+		} catch (SchedulerException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	/**
@@ -54,5 +84,30 @@ public class MainController {
 		
 		
 		return null;
+	}
+	
+	@Override
+	public void execute(JobExecutionContext context) throws JobExecutionException {
+		Integer[] current;
+		int index = 0,min = 2147483647;
+		if(waitForCreate.size()!=0) {
+			current = new Integer[endpoints.size()];//Each endpoint's current container number
+			for(int i=0;i<endpoints.size();i++)
+				current[i] = endpoints.get(i).getTotalContainers();
+			while(waitForCreate.size()!=0&&BungeeDynamicSync.isMaster()) {
+				for(int i=0;i<current.length;i++) {//find minimum
+					if(current[i]<min&&current[i]<endpoints.get(i).getMaxContainerLimit()) {
+						min = current[i];
+						index = i;
+					}
+				}
+				if(min==2147483647)//No any free endpoints
+					break;
+				current[index]++;
+				
+				//TODO create
+				
+			}
+		}
 	}
 }

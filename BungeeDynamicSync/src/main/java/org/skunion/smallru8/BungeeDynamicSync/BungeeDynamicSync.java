@@ -55,4 +55,8 @@ public class BungeeDynamicSync extends Plugin{
 		}
 	}
 	
+	public static boolean isMaster() {
+		return MASTER.equals(SERVER_ID);
+	}
+	
 }
