@@ -12,26 +12,20 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
 
 public class PortainerAuth {
-
+	
 	private String ip;
 	private int port;
 	private String account;
 	private String passwd;
 	private String token;
-	private int endpoint;
 	
 	private int expireTimeSec;
 	
-	private int maxContainer;
-	
-	//TODO Support multi endpoints
-	public PortainerAuth(String ip,int port,String account,String passwd,int id,int maxContainer) {
+	public PortainerAuth(String ip,int port,String account,String passwd) {
 		this.ip = ip;
 		this.port = port;
 		this.account = account;
 		this.passwd = passwd;
-		this.maxContainer = maxContainer;
-		endpoint = id;
 	}
 	
 	public String getIP() {
@@ -42,12 +36,8 @@ public class PortainerAuth {
 		return port;
 	}
 	
-	public int getMaxContainer() {
-		return maxContainer;
-	}
-	
-	public String getURL() {
-		return "http://"+ip+":"+port+"/api/endpoints/"+endpoint+"/docker/";
+	public String getURL(int endPointId) {
+		return "http://"+ip+":"+port+"/api/endpoints/"+endPointId+"/docker/";
 	}
 	
 	public boolean refreshToken() {

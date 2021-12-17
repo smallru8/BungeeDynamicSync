@@ -21,17 +21,32 @@ import org.json.JSONObject;
 import org.skunion.smallru8.BungeeDynamicSync.BungeeDynamicSync;
 import org.skunion.smallru8.util.SHA;
 
-public class PortainerController {
-	
+public class EndPointController {
+
 	private PortainerAuth portainerAuth;
 	private boolean LOCK = false;
 	private HttpClient httpclient;
 	private Random random = new Random();
+	private int endPointId;
+	private int maxContainer;
+	private String endPointHostIP;
 	
-	public PortainerController(PortainerAuth portainerAuth) {
+	public EndPointController(PortainerAuth portainerAuth,int endpoint,int max,String ip) {
 		this.portainerAuth = portainerAuth;
 		httpclient = HttpClientBuilder.create().build();
+		endPointId = endpoint;
+		maxContainer = max;
+		endPointHostIP = ip;
 	}
+	
+	public EndPointController(PortainerAuth portainerAuth,int endpoint,int max) {
+		this.portainerAuth = portainerAuth;
+		httpclient = HttpClientBuilder.create().build();
+		endPointId = endpoint;
+		maxContainer = max;
+		endPointHostIP = portainerAuth.getIP();
+	}
+	
 	
 	/**
 	 * Get all containers which have label "manager=BDS" and (BDStype=type)
@@ -41,7 +56,7 @@ public class PortainerController {
 	 */
 	public JSONArray getContainerJsonArray(String type) {
 		
-		String url = portainerAuth.getURL()+"containers/json?filters=";
+		String url = portainerAuth.getURL(endPointId)+"containers/json?filters=";
 		try {
 			String filter = "{\"label\":[\"manager=BDS\"";
 			filter = type=="" ? (filter+="]}") : (filter+=",\"BDStype="+type+"\"]}");
@@ -62,7 +77,7 @@ public class PortainerController {
 	}
 	
 	public JSONObject getContainerDetailById(String id) {
-		String url = portainerAuth.getURL()+"containers/json?filters=";
+		String url = portainerAuth.getURL(endPointId)+"containers/json?filters=";
 		try {
 			String filter = "{\"id\":[\""+id+"\"]}";
 			
@@ -97,7 +112,7 @@ public class PortainerController {
 	}
 	
 	public int getMaxContainerLimit() {
-		return portainerAuth.getMaxContainer();
+		return maxContainer;
 	}
 	
 	public void clearContainer() {
@@ -120,7 +135,7 @@ public class PortainerController {
 		if(!LOCK) {
 			String name = dynamic_server+"_"+SHA.SHA1(dynamic_server+random.nextInt());
 			String json_raw = getCreateJson_RAW(BungeeDynamicSync.CONFIG.getServerConfig(dynamic_server).getString("ContainerCreateScript")).replace("$TYPE", dynamic_server);
-			String url = portainerAuth.getURL()+"containers/create?name="+name;
+			String url = portainerAuth.getURL(endPointId)+"containers/create?name="+name;
 			
 			try {
 				HttpPost req = new HttpPost(url);
@@ -144,11 +159,11 @@ public class PortainerController {
 	/**
 	 * 
 	 * @param id
-	 * @return String[] : [0] = type(dynamic_server), [1] = port
+	 * @return String[] : [0] = type(dynamic_server), [1] = ip, [2] = port
 	 */
 	public String[] startContainer(String id) {
 		String[] rets = {"","",""};
-		String url = portainerAuth.getURL()+"containers/"+id+"/start";
+		String url = portainerAuth.getURL(endPointId)+"containers/"+id+"/start";
 		try {
 			HttpPost req = new HttpPost(url);
 			req.setHeader("Content-Type", "application/json");
@@ -158,6 +173,7 @@ public class PortainerController {
 		    JSONObject detail = getContainerDetailById(id);
 		    if(detail!=null) {
 		    	rets[0] = detail.getJSONObject("Labels").getString("BDStype");
+		    	//IP = endPointHostIP
 		    	//TODO NEXT
 		    }
 		    
@@ -174,7 +190,7 @@ public class PortainerController {
 	 * @param force
 	 */
 	public void removeContainer(String id,boolean force) {
-		String url = portainerAuth.getURL()+"containers/"+id;
+		String url = portainerAuth.getURL(endPointId)+"containers/"+id;
 		url = force ? (url+="?force=true") : (url+="?force=false");
 		try {
 			HttpDelete req = new HttpDelete(url);
