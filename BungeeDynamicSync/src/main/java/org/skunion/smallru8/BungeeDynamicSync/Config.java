@@ -70,8 +70,12 @@ public class Config {
 		}
 	}
 	
-	public Configuration getServerConfig(String dynamic_server) {
-		return config.getSection("servers").getSection(dynamic_server);
+	public Configuration getServerConfig() {
+		return config.getSection("servers");
+	}
+	
+	public Configuration getPortainerConfig() {
+		return config.getSection("portainers");
 	}
 	
 	public File getContainerSettingDir() {

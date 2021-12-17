@@ -31,18 +31,18 @@ public class EndPointController {
 	private int maxContainer;
 	private String endPointHostIP;
 	
-	public EndPointController(PortainerAuth portainerAuth,int endpoint,int max,String ip) {
+	public EndPointController(PortainerAuth portainerAuth,int endpointId,int max,String ip) {
 		this.portainerAuth = portainerAuth;
 		httpclient = HttpClientBuilder.create().build();
-		endPointId = endpoint;
+		endPointId = endpointId;
 		maxContainer = max;
 		endPointHostIP = ip;
 	}
 	
-	public EndPointController(PortainerAuth portainerAuth,int endpoint,int max) {
+	public EndPointController(PortainerAuth portainerAuth,int endpointId,int max) {
 		this.portainerAuth = portainerAuth;
 		httpclient = HttpClientBuilder.create().build();
-		endPointId = endpoint;
+		endPointId = endpointId;
 		maxContainer = max;
 		endPointHostIP = portainerAuth.getIP();
 	}
@@ -134,7 +134,7 @@ public class EndPointController {
 	public String createContainer(String dynamic_server) {
 		if(!LOCK) {
 			String name = dynamic_server+"_"+SHA.SHA1(dynamic_server+random.nextInt());
-			String json_raw = getCreateJson_RAW(BungeeDynamicSync.CONFIG.getServerConfig(dynamic_server).getString("ContainerCreateScript")).replace("$TYPE", dynamic_server);
+			String json_raw = getCreateJson_RAW(BungeeDynamicSync.CONFIG.getServerConfig().getSection(dynamic_server).getString("ContainerCreateScript")).replace("$TYPE", dynamic_server);
 			String url = portainerAuth.getURL(endPointId)+"containers/create?name="+name;
 			
 			try {

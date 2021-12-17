@@ -5,6 +5,7 @@ import java.util.Base64;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -26,6 +27,7 @@ public class PortainerAuth {
 		this.port = port;
 		this.account = account;
 		this.passwd = passwd;
+		expireTimeSec = 0;
 	}
 	
 	public String getIP() {
@@ -38,6 +40,22 @@ public class PortainerAuth {
 	
 	public String getURL(int endPointId) {
 		return "http://"+ip+":"+port+"/api/endpoints/"+endPointId+"/docker/";
+	}
+	
+	public String getEndPointInfo(int endPointId) {
+		HttpClient httpclient = HttpClientBuilder.create().build();
+		try {
+			String url = "http://"+ip+":"+port+"/api/endpoints/"+endPointId;
+			HttpGet req = new HttpGet(url);
+			req.setHeader("Content-Type", "application/json");
+		    req.setHeader("Authorization", "Bearer "+getToken());
+		    HttpResponse response = httpclient.execute(req);
+		    HttpEntity entity = response.getEntity();
+		    return EntityUtils.toString(entity);
+		}catch (Exception e) {
+		    System.out.println(e.getMessage());
+	    }
+		return "{}";
 	}
 	
 	public boolean refreshToken() {
