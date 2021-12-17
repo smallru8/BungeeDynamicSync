@@ -1,1 +1,2 @@
 # BungeeDynamicSync
+TEST
