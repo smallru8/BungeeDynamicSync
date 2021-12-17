@@ -12,10 +12,12 @@ public class BungeeDynamicSync extends Plugin{
 	
 	public static String MASTER = "";
 	
+	public static Config CONFIG;
 	public static RedisBungeeAPI REDIS_API;
 	public static final String PUB_SUB_CHANNEL = "BDS_MESSAGE";
 	public static String SERVER_ID = "";
 	public static MessageHandle mseeageCtrl;
+	
 	
 	private Clock jobClock;
 	
@@ -24,6 +26,9 @@ public class BungeeDynamicSync extends Plugin{
 		REDIS_API = RedisBungee.getApi();
 		REDIS_API.registerPubSubChannels(PUB_SUB_CHANNEL);
 		SERVER_ID = REDIS_API.getServerId();
+		
+		CONFIG = new Config();
+		
 		mseeageCtrl = new MessageHandle();
 		setMasterController();
 		jobClock = new Clock();

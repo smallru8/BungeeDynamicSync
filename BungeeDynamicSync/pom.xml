@@ -22,8 +22,18 @@
 	  <id>jitpack.io</id>
 	  <url>https://jitpack.io</url>
 	</repository>
+	<repository>
+  		<id>Small2Space</id>
+  		<name>Small2Space</name>
+  		<url>https://raw.github.com/Small2Space/mvn-repo/master</url>
+  	</repository>
   </repositories>
   <dependencies>
+    <dependency>
+      <groupId>org.skunion.smallru8</groupId>
+      <artifactId>Util</artifactId>
+      <version>1.8</version>
+    </dependency>
     <dependency>
       <groupId>net.md-5</groupId>
       <artifactId>bungeecord-api</artifactId>

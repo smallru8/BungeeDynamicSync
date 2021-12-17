@@ -18,17 +18,20 @@ public class PortainerAuth {
 	private String account;
 	private String passwd;
 	private String token;
+	private int endpoint;
 	
 	private int expireTimeSec;
 	
 	private int maxContainer;
 	
-	public PortainerAuth(String ip,int port,String account,String passwd,int maxContainer) {
+	//TODO Support multi endpoints
+	public PortainerAuth(String ip,int port,String account,String passwd,int id,int maxContainer) {
 		this.ip = ip;
 		this.port = port;
 		this.account = account;
 		this.passwd = passwd;
 		this.maxContainer = maxContainer;
+		endpoint = id;
 	}
 	
 	public String getIP() {
@@ -44,7 +47,7 @@ public class PortainerAuth {
 	}
 	
 	public String getURL() {
-		return "http://"+ip+":"+port+"/api/endpoints/1/docker/";
+		return "http://"+ip+":"+port+"/api/endpoints/"+endpoint+"/docker/";
 	}
 	
 	public boolean refreshToken() {

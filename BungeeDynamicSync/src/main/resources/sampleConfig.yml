@@ -1,0 +1,33 @@
+servers:
+    sample_skywar:
+        min: 1
+        max: 2
+        ContainerCreateScript: "CreateContainer.json"
+    sample_bedwar:
+        min: 2
+        max: 4
+        ContainerCreateScript: "CreateContainer.json"
+
+portainers:
+    portainer1:
+        ip: "127.0.0.1"
+        port: 9000
+        username: "admin"
+        passwd: "admin"
+        endpoints:
+            p1:
+                id: 1
+                max: 6
+    
+    portainer2:
+        ip: "10.10.10.87"
+        port: 9000
+        username: "admin2"
+        passwd: "admin2"
+        endpoints:
+            p1:
+                id: 1
+                max: 12
+            p2:
+                id: 2
+                max: 12

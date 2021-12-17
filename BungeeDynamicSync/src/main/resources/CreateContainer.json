@@ -1,5 +1,5 @@
 {
-	"Image": "$IMAGE",
+	"Image": "YOUR_DOCKER_IMAGE",
 	"ExposedPorts": {
 		"25565/tcp: {}"
 	},
