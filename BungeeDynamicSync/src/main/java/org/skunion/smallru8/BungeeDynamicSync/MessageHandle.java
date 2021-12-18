@@ -39,11 +39,23 @@ public class MessageHandle implements Listener{
 	
 	/**
 	 * Delete container message
-	 * Send pub/sub message | SERVER     | DEL    | <CONTAINER_NAME>      |
+	 * Send pub/sub message | SERVER     | DEL    | CONTAINER_NAME      |
 	 * @param container_id
 	 */
 	public void sendDELMessage(String container_id) {
 		sendPubSubMessage("SERVER DEL "+container_id);
+	}
+	
+	/**
+	 * Add container message
+	 * Send pub/sub message | SERVER     | ADD    | CONTAINER_NAME      | ip | port | motd |
+	 * @param container_id
+	 * @param ip
+	 * @param port
+	 * @param motd
+	 */
+	public void sendADDMessage(String container_id,String ip,String port,String motd) {
+		sendPubSubMessage("SERVER ADD "+container_id+" "+ip+" "+port+" "+motd);
 	}
 	
 }

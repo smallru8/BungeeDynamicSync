@@ -27,7 +27,7 @@ public class CheckDynamicServerStatus implements Job {
 		
 		//Ping all dynamic server, if no reply for twice, it would be killed
 		for (Map.Entry<String, ServerInfo> entry : servers.entrySet()) {
-            if(!dynServerTypes.contains(entry.getValue().getMotd()))//Not dynamic server
+            if(!dynServerTypes.contains(entry.getValue().getMotd()))//Not a dynamic server
             	continue;
             
             entry.getValue().ping(new Callback<ServerPing>() {
@@ -36,8 +36,6 @@ public class CheckDynamicServerStatus implements Job {
 					if(error!=null){
 						if(!NO_REPLY_SERVER.containsKey(entry.getKey())) {//No reply once
 							NO_REPLY_SERVER.put(entry.getKey(), 0);
-						}else {//No reply twice or more
-							NO_REPLY_SERVER.replace(entry.getKey(), NO_REPLY_SERVER.get(entry.getKey())+1);
 						}
 					}else {//has reply
 						NO_REPLY_SERVER.remove(entry.getKey());
@@ -46,7 +44,7 @@ public class CheckDynamicServerStatus implements Job {
             });
         }
 
-		
+		//No reply for 4 times will be remove
 		for (Iterator<Entry<String, Integer>> it =  NO_REPLY_SERVER.entrySet().iterator();it.hasNext();) {
 			Entry<String, Integer> e = it.next();
 			e.setValue(e.getValue()+1);
