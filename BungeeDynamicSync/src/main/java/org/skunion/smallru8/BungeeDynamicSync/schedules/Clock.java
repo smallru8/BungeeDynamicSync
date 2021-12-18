@@ -13,12 +13,13 @@ import org.quartz.impl.StdSchedulerFactory;
 
 public class Clock {
 
-	private JobDetail job;
+	private JobDetail job,job2;
 	private Trigger tri;
 	private Scheduler scheudler_check_master;
 	
 	public Clock() {
 		job = JobBuilder.newJob(CheckProxyStatus.class).build();
+		job2 = JobBuilder.newJob(CheckDynamicServerStatus.class).build();
 		//every 30 seconds
 		tri = TriggerBuilder.newTrigger().withIdentity("CheckProxyStatus").withSchedule(CronScheduleBuilder.cronSchedule("0/30 * * * * ? *").inTimeZone(TimeZone.getTimeZone("Asia/Taipei"))).build();
 		try {
@@ -31,6 +32,7 @@ public class Clock {
 	public void start() {
 		try {
 			scheudler_check_master.scheduleJob(job, tri);
+			scheudler_check_master.scheduleJob(job2, tri);
 		} catch (SchedulerException e) {
 			e.printStackTrace();
 		}

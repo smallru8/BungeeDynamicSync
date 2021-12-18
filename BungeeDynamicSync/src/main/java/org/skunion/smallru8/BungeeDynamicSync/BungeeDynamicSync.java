@@ -12,6 +12,7 @@ import java.net.InetSocketAddress;
 import java.util.Iterator;
 import java.util.List;
 
+import org.skunion.smallru8.BungeeDynamicSync.docker.MainController;
 import org.skunion.smallru8.BungeeDynamicSync.schedules.Clock;
 
 import com.imaginarycode.minecraft.redisbungee.*;
@@ -26,6 +27,9 @@ public class BungeeDynamicSync extends Plugin{
 	public static RedisBungeeAPI REDIS_API;
 	public static final String PUB_SUB_CHANNEL = "BDS_MESSAGE";
 	public static String SERVER_ID = "";
+	
+	public static MainController CONTROLLER;
+	
 	public static MessageHandle mseeageCtrl;
 	
 	
@@ -42,6 +46,9 @@ public class BungeeDynamicSync extends Plugin{
 		
 		mseeageCtrl = new MessageHandle();
 		setMasterController();
+		
+		CONTROLLER = new MainController();
+		
 		jobClock = new Clock();
 		jobClock.start();//Auto update current controller
 		//getProxy().getServers(); TODO

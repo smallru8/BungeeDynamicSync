@@ -195,20 +195,23 @@ public class EndPointController {
 	
 	/**
 	 * Remove container from portainer.
-	 * @param id container id
+	 * @param id container id or name
 	 * @param force
 	 */
-	public void removeContainer(String id,boolean force) {
+	public boolean removeContainer(String id,boolean force) {
 		String url = portainerAuth.getURL(endPointId)+"containers/"+id;
 		url = force ? (url+="?force=true") : (url+="?force=false");
 		try {
 			HttpDelete req = new HttpDelete(url);
 			req.setHeader("Content-Type", "application/json");
 		    req.setHeader("Authorization", "Bearer "+portainerAuth.getToken());
-		    httpclient.execute(req);
+		    HttpResponse response = httpclient.execute(req);
+		    if(response.getStatusLine().getStatusCode()==204)
+		    	return true;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		return false;
 	}
 	
 	private String getCreateJson_RAW(String jsonName) {

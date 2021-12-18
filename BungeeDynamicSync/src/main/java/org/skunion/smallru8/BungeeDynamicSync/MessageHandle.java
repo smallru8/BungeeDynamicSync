@@ -2,6 +2,7 @@ package org.skunion.smallru8.BungeeDynamicSync;
 
 import com.imaginarycode.minecraft.redisbungee.events.PubSubMessageEvent;
 
+import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 
@@ -35,4 +36,14 @@ public class MessageHandle implements Listener{
 	public void sendPubSubMessage(String message) {
 		BungeeDynamicSync.REDIS_API.sendChannelMessage(BungeeDynamicSync.PUB_SUB_CHANNEL, message);
 	}
+	
+	/**
+	 * Delete container message
+	 * Send pub/sub message | SERVER     | DEL    | <CONTAINER_NAME>      |
+	 * @param container_id
+	 */
+	public void sendDELMessage(String container_id) {
+		sendPubSubMessage("SERVER DEL "+container_id);
+	}
+	
 }
