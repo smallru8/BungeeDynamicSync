@@ -68,8 +68,12 @@ public class BungeeDynamicSync extends Plugin{
 		
 		if(!proxyId.equals(BungeeDynamicSync.MASTER)) {//Msater controller changed
 			BungeeDynamicSync.MASTER = proxyId;
-			if(proxyId.equals(BungeeDynamicSync.SERVER_ID))//This Bungeecord is master controller now
+			if(proxyId.equals(BungeeDynamicSync.SERVER_ID)) {//This Bungeecord is master controller now
 				BungeeDynamicSync.mseeageCtrl.sendPubSubMessage("CONTROLLER UPDATE "+proxyId);
+				CONTROLLER.start();
+			}else {
+				CONTROLLER.stop();
+			}
 		}
 	}
 	

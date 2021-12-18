@@ -188,6 +188,7 @@ public class EndPointController {
 		    }
 		} catch (Exception e) {
 			e.printStackTrace();
+			return null;
 		}
 		//Bungeecord use these info to update server list
 		return rets;

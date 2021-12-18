@@ -21,6 +21,8 @@ import org.skunion.smallru8.BungeeDynamicSync.BungeeDynamicSync;
 
 import net.md_5.bungee.config.Configuration;
 
+//TODO Detect every type of room's number and auto create
+
 public class MainController implements Job{
 
 	private ArrayList<PortainerAuth> portainers;
@@ -68,22 +70,43 @@ public class MainController implements Job{
 		try {
 			qScheudler = StdSchedulerFactory.getDefaultScheduler();
 			qScheudler.scheduleJob(qJob, queueProcessTri);
-			qScheudler.start();
 		} catch (SchedulerException e) {
 			e.printStackTrace();
 		}
 	}
 	
 	/**
-	 * TODO Create a container and start
-	 * @param dynamic_server
-	 * @return String[] : [0] = type(dynamic_server), [1] = ip, [2] = port
+	 * Pause this controller
 	 */
-	public String[] createNewRoom(String dynamic_server) {
-		
-		
-		
-		return null;
+	public void stop() {
+		try {
+			if(!qScheudler.isInStandbyMode())
+				qScheudler.pauseAll();
+		} catch (SchedulerException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Start this controller
+	 */
+	public void start() {
+		try {
+			if(qScheudler.isStarted())
+				qScheudler.resumeAll();
+			else
+				qScheudler.start();
+		} catch (SchedulerException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Add a container as a game room
+	 * @param dynamic_server game type
+	 */
+	public void createNewRoom(String dynamic_server) {
+		waitForCreate.add(dynamic_server);
 	}
 	
 	/**
@@ -114,14 +137,19 @@ public class MainController implements Job{
 				}
 				if(min==2147483647)//No any free endpoints
 					break;
-				current[index]++;
 				
-				String dynamic_server = waitForCreate.poll();
-				String container_name = endpoints.get(index).createContainer(dynamic_server);
+				
+				String container_name = endpoints.get(index).createContainer(waitForCreate.poll());
 				if(container_name==null)//Create failed
 					continue;
 				String[] containerData = endpoints.get(index).startContainer(container_name);
-				//TODO setting、broadcast、setMotd as type
+				if(containerData==null)
+					continue;
+				//Setting、broadcast、setMotd as type
+				BungeeDynamicSync.addServertoList(container_name, containerData[1], containerData[2], containerData[0]);
+				BungeeDynamicSync.mseeageCtrl.sendADDMessage(container_name, containerData[1], containerData[2], containerData[0]);//broadcast
+				
+				current[index]++;
 			}
 		}
 	}
