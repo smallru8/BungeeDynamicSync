@@ -129,12 +129,12 @@ public class EndPointController {
 	/**
 	 * Create a container
 	 * @param dynamic_server
-	 * @return Container's id or null if create failed
+	 * @return Container's name or null if create failed
 	 */
 	public String createContainer(String dynamic_server) {
 		if(!LOCK) {
 			String name = dynamic_server+"_"+SHA.SHA1(dynamic_server+random.nextInt());
-			String json_raw = getCreateJson_RAW(BungeeDynamicSync.CONFIG.getServerConfig().getSection(dynamic_server).getString("ContainerCreateScript")).replace("$TYPE", dynamic_server);
+			String json_raw = getCreateJson_RAW(BungeeDynamicSync.CONFIG.getServerConfig().getSection(dynamic_server).getString("ContainerCreateScript")).replace("$TYPE", dynamic_server).replace("$CT_NAME",name);
 			String url = portainerAuth.getURL(endPointId)+"containers/create?name="+name;
 			
 			try {
@@ -147,17 +147,20 @@ public class EndPointController {
 			    HttpEntity entity = response.getEntity();
 			    
 			    JSONObject result = new JSONObject(EntityUtils.toString(entity));
-			    return result.getString("Id");
+			    BungeeDynamicSync.BDS.getLogger().info("Create container: "+dynamic_server+", id: "+result.getString("Id")+" at endpoint: "+endPointHostIP);
+			    if(result.getString("Id")==null)
+			    	return null;
+			    return name;
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
-		
+		BungeeDynamicSync.BDS.getLogger().info("Create container: "+dynamic_server+" failed. Endpoint: "+endPointHostIP);
 		return null;
 	}
 	
 	/**
-	 * 
+	 * Start container by id or name
 	 * @param id
 	 * @return String[] : [0] = type(dynamic_server), [1] = ip, [2] = port
 	 */

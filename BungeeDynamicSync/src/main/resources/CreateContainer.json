@@ -15,6 +15,6 @@
 		"BDStype": "$TYPE"
 	},
 	"ENV":[
-		"SQL_ACCOUNT=admin","SQL_DB=minecraft","SQL_PASSWD=admin"
+		"CONTAINER_NAME=$CT_NAME"
 	]
 }

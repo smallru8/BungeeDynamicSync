@@ -19,6 +19,7 @@ import org.quartz.TriggerBuilder;
 import org.quartz.impl.StdSchedulerFactory;
 import org.skunion.smallru8.BungeeDynamicSync.BungeeDynamicSync;
 
+import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.config.Configuration;
 
 public class MainController implements Job{
@@ -105,9 +106,14 @@ public class MainController implements Job{
 					break;
 				current[index]++;
 				
-				//TODO create
-				
+				String dynamic_server = waitForCreate.poll();
+				String container_name = endpoints.get(index).createContainer(dynamic_server);
+				if(container_name==null)//Create failed
+					continue;
+				String[] containerData = endpoints.get(index).startContainer(container_name);
+				//TODO setting、broadcast
 			}
 		}
 	}
+	
 }
