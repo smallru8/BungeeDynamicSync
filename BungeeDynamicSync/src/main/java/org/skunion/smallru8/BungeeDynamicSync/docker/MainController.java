@@ -1,7 +1,11 @@
 package org.skunion.smallru8.BungeeDynamicSync.docker;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Queue;
 import java.util.TimeZone;
 
@@ -18,7 +22,9 @@ import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
 import org.quartz.impl.StdSchedulerFactory;
 import org.skunion.smallru8.BungeeDynamicSync.BungeeDynamicSync;
+import org.skunion.smallru8.util.Pair;
 
+import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.config.Configuration;
 
 //TODO Detect every type of room's number and auto create
@@ -138,20 +144,49 @@ public class MainController implements Job{
 				if(min==2147483647)//No any free endpoints
 					break;
 				
-				
 				String container_name = endpoints.get(index).createContainer(waitForCreate.poll());
 				if(container_name==null)//Create failed
 					continue;
 				String[] containerData = endpoints.get(index).startContainer(container_name);
 				if(containerData==null)
 					continue;
-				//Setting、broadcast、setMotd as type
+				//Setting, broadcast, setMotd as type
 				BungeeDynamicSync.addServertoList(container_name, containerData[1], containerData[2], containerData[0]);
 				BungeeDynamicSync.mseeageCtrl.sendADDMessage(container_name, containerData[1], containerData[2], containerData[0]);//broadcast
 				
 				current[index]++;
 			}
 		}
+		
+		////////////////////////////////////////////////////////////////////////////////////////////
+		//Check free room, if not enough, create a new one
+		
+		Collection<String> dynServerTypes = BungeeDynamicSync.CONFIG.getServerConfig().getKeys();
+		Map<String,Pair<Integer,Integer>> currentRoom = new HashMap<String,Pair<Integer,Integer>>();
+		dynServerTypes.forEach( type->{
+			Pair<Integer,Integer> p = new Pair<Integer,Integer>();//current free room, current total room
+			p.makePair(0, 0);
+			currentRoom.put(type, p);
+		});
+		
+		for(Entry<ServerInfo, Boolean> e : BungeeDynamicSync.ROOM_IS_STARTED.entrySet()) {
+			currentRoom.get(e.getKey().getMotd()).second++;
+			if(!e.getValue())//not started
+				currentRoom.get(e.getKey().getMotd()).first++;
+		}
+		
+		dynServerTypes.forEach(type->{
+			int minCT = BungeeDynamicSync.CONFIG.getServerConfig().getSection(type).getInt("min");
+			int maxCT = BungeeDynamicSync.CONFIG.getServerConfig().getSection(type).getInt("max");
+			Pair<Integer,Integer> p = currentRoom.get(type);
+			
+			while(p.first<minCT&&p.second<maxCT) {//free room not enough
+				p.first++;
+				p.second++;
+				createNewRoom(type);
+			}
+		});
+		
 	}
 	
 }

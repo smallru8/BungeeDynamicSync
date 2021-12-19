@@ -8,9 +8,10 @@ Spigot server's plugin will get container name by reading ENV CONTAINER_NAME val
 ```  
 Pub/Sub message format:
 
-Change master controller: 								      | CONTROLLER | UPDATE | <proxy id>            |
-Add a new dynamic server(broadcast by master controller):     | SERVER     | ADD    | <CONTAINER_NAME>      | <ip> | <port> | <motd> |
-Remove a dynamic server(broadcast by spigot dynamic server):  | SERVER     | DEL    | <CONTAINER_NAME>      |
+Change master controller: 								                     | CONTROLLER | UPDATE  | <proxy id>            |
+Add a new dynamic server(broadcast by master controller):                    | SERVER     | ADD     | <CONTAINER_NAME>      | <ip> | <port> | <motd> |
+Remove a dynamic server(broadcast by spigot dynamic server when game over):  | SERVER     | DEL     | <CONTAINER_NAME>      |
+Game has started(broadcast by spigot dynamic server when game start):        | SERVER     | STARTED | <CONTAINER_NAME>      |
 Sync: | SYNC | BUNGEE | DYNAMIC_SERVER_LIST |
 
 ```  

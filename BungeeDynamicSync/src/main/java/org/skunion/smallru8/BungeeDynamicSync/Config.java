@@ -15,6 +15,7 @@ import net.md_5.bungee.config.YamlConfiguration;
 public class Config {
 	
 	public Configuration config;
+	
 	private File f_config;
 	private File f_dir_docker;
 	

@@ -21,11 +21,19 @@ public class MessageHandle implements Listener{
 		if(event.getChannel().equals(BungeeDynamicSync.PUB_SUB_CHANNEL)) {
 			String message = event.getMessage();
 			String[] cmd = message.split(" ");
-			
+			int len = cmd.length;
 			if(cmd[0].equals("CONTROLLER")&&cmd.length==3) {
 				if(cmd[1].equals("UPDATE"))
 					BungeeDynamicSync.MASTER = cmd[2];
 				
+			}else if(cmd[0].equals("SERVER")&&len>=2) {
+				if(cmd[1].equals("ADD")&&len==6) {
+					//TODO
+				}else if(cmd[1].equals("DEL")&&len==3) {
+					//TODO
+				}else if(cmd[1].equals("STARTED")&&len==3) {//From Spigot plugin tell everyone its game has started 
+					BungeeDynamicSync.setGameStartedFlag(cmd[2], true);
+				}
 			}
 			
 			

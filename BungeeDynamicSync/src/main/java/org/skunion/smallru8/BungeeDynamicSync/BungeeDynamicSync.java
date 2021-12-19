@@ -1,10 +1,13 @@
 package org.skunion.smallru8.BungeeDynamicSync;
 
 import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.plugin.Plugin;
 
 import java.net.InetSocketAddress;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.skunion.smallru8.BungeeDynamicSync.docker.MainController;
 import org.skunion.smallru8.BungeeDynamicSync.schedules.Clock;
@@ -26,6 +29,8 @@ public class BungeeDynamicSync extends Plugin{
 	
 	public static MessageHandle mseeageCtrl;
 	
+	//Room list
+	public static Map<ServerInfo,Boolean> ROOM_IS_STARTED = new HashMap<ServerInfo,Boolean>();//If a room is started
 	
 	private Clock jobClock;
 	
@@ -73,12 +78,27 @@ public class BungeeDynamicSync extends Plugin{
 	
 	public static void addServertoList(String dynamic_server_name,String ip,String port,String motd) {
 		InetSocketAddress address = new InetSocketAddress(ip,Integer.parseInt(port));
-		ProxyServer.getInstance().getServers().put(dynamic_server_name,  ProxyServer.getInstance().constructServerInfo(dynamic_server_name, address, motd, false));
+		ServerInfo serverInfo = ProxyServer.getInstance().constructServerInfo(dynamic_server_name, address, motd, false);
+		ProxyServer.getInstance().getServers().put(dynamic_server_name,serverInfo);
+		ROOM_IS_STARTED.put(serverInfo, false);
 	}
 	
 	public static void delServerfromList(String dynamic_server_name) {
-		//Players would be teleported to hub by dynamic_server
-		ProxyServer.getInstance().getServers().remove(dynamic_server_name);
+		ROOM_IS_STARTED.remove(ProxyServer.getInstance().getServerInfo(dynamic_server_name));
+		ProxyServer.getInstance().getServers().remove(dynamic_server_name);//Before remove this, players would be teleported to hub by dynamic_server
+	}
+	
+	/**
+	 * This room's game has started.
+	 * @param dynamic_server_name
+	 * @param b
+	 */
+	public static void setGameStartedFlag(String dynamic_server_name,boolean b) {
+		ROOM_IS_STARTED.replace(ProxyServer.getInstance().getServerInfo(dynamic_server_name), b);
+	}
+	
+	public static boolean isGameStarted(String dynamic_server_name) {
+		return ROOM_IS_STARTED.get(ProxyServer.getInstance().getServerInfo(dynamic_server_name));
 	}
 	
 	public static boolean isMaster() {
