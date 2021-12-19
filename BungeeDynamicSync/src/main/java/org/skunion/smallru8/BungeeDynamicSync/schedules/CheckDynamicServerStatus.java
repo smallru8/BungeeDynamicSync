@@ -18,6 +18,8 @@ import net.md_5.bungee.api.config.ServerInfo;
 
 public class CheckDynamicServerStatus implements Job {
 
+	//TODO pack this into MainController
+	
 	private static Map<String,Integer> NO_REPLY_SERVER = new HashMap<String,Integer>();
 	
 	@Override
@@ -49,11 +51,10 @@ public class CheckDynamicServerStatus implements Job {
 			Entry<String, Integer> e = it.next();
 			e.setValue(e.getValue()+1);
 			if(e.getValue() > 3) {
-				if(BungeeDynamicSync.isMaster()) {//Remove timeout container
+				if(BungeeDynamicSync.isMaster())//Remove timeout container
 					BungeeDynamicSync.CONTROLLER.removeRoom(e.getKey());
-					BungeeDynamicSync.mseeageCtrl.sendDELMessage(e.getKey());//Tell others remove 
-				}
-				BungeeDynamicSync.delServerfromList(e.getKey());
+				else
+					BungeeDynamicSync.delServerfromList(e.getKey());
 				it.remove();
 			}
 		}

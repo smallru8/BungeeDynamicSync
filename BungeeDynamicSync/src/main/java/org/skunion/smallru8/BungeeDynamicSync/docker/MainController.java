@@ -32,6 +32,7 @@ public class MainController implements Job{
 	private ArrayList<PortainerAuth> portainers;
 	private ArrayList<EndPointController> endpoints;
 	private Queue<String> waitForCreate = new LinkedList<String>();
+	private Queue<String> waitForRemove = new LinkedList<String>();
 	
 	private Trigger queueProcessTri;
 	private JobDetail qJob;
@@ -117,7 +118,8 @@ public class MainController implements Job{
 	 * Remove container by id or name
 	 * @param id
 	 */
-	public void removeRoom(String id) {
+	public void removeRoom(String id) {//TODO
+		waitForRemove.add(id);
 		for(int i=0;i<endpoints.size();i++) {
 			if(endpoints.get(i).removeContainer(id, true))
 				break;
@@ -126,6 +128,26 @@ public class MainController implements Job{
 	//TODO add delete queue
 	@Override
 	public void execute(JobExecutionContext context) throws JobExecutionException {
+		////////////////////////////////////////////////////////////////////////////////////////////
+		//Process waitForRemove queue
+		if(waitForRemove.size()!=0) {
+			while(waitForRemove.size()!=0&&BungeeDynamicSync.isMaster()) {
+				String name = waitForRemove.poll();
+				for(int i=0;i<endpoints.size();i++) {
+					if(endpoints.get(i).removeContainer(name, true)) {
+						BungeeDynamicSync.mseeageCtrl.sendDELMessage(name);//Tell others remove 
+						BungeeDynamicSync.delServerfromList(name);
+						break;
+					}
+				}
+				
+			}
+			
+		}
+		
+		
+		////////////////////////////////////////////////////////////////////////////////////////////
+		//Process waitForCreate queue
 		Integer[] current;
 		int index = 0,min = 2147483647;
 		if(waitForCreate.size()!=0) {
