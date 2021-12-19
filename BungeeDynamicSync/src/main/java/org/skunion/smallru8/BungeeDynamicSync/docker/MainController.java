@@ -27,8 +27,6 @@ import org.skunion.smallru8.util.Pair;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.config.Configuration;
 
-//TODO Detect every type of room's number and auto create
-
 public class MainController implements Job{
 
 	private ArrayList<PortainerAuth> portainers;
@@ -125,7 +123,7 @@ public class MainController implements Job{
 				break;
 		}
 	}
-	
+	//TODO add delete queue
 	@Override
 	public void execute(JobExecutionContext context) throws JobExecutionException {
 		Integer[] current;
@@ -159,6 +157,7 @@ public class MainController implements Job{
 		}
 		
 		////////////////////////////////////////////////////////////////////////////////////////////
+		//Detect every type of room's number and auto create
 		//Check free room, if not enough, create a new one
 		
 		Collection<String> dynServerTypes = BungeeDynamicSync.CONFIG.getServerConfig().getKeys();
@@ -186,7 +185,6 @@ public class MainController implements Job{
 				createNewRoom(type);
 			}
 		});
-		
 	}
 	
 }
