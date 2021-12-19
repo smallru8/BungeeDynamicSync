@@ -116,16 +116,13 @@ public class MainController implements Job{
 	
 	/**
 	 * Remove container by id or name
+	 * Use to remove freeze container
 	 * @param id
 	 */
-	public void removeRoom(String id) {//TODO
+	public void removeRoom(String id) {
 		waitForRemove.add(id);
-		for(int i=0;i<endpoints.size();i++) {
-			if(endpoints.get(i).removeContainer(id, true))
-				break;
-		}
 	}
-	//TODO add delete queue
+
 	@Override
 	public void execute(JobExecutionContext context) throws JobExecutionException {
 		////////////////////////////////////////////////////////////////////////////////////////////
