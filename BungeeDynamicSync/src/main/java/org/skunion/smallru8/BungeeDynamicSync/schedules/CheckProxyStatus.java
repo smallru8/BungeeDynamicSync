@@ -9,7 +9,7 @@ public class CheckProxyStatus implements Job{
 
 	@Override
 	public void execute(JobExecutionContext context) throws JobExecutionException {
-		BungeeDynamicSync.setMasterController();		
+		BungeeDynamicSync.setMasterController();
 	}
 
 }

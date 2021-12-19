@@ -1,15 +1,9 @@
 package org.skunion.smallru8.BungeeDynamicSync;
 
-import net.md_5.bungee.api.Callback;
 import net.md_5.bungee.api.ProxyServer;
-import net.md_5.bungee.api.chat.TextComponent;
-import net.md_5.bungee.api.config.ServerInfo;
-import net.md_5.bungee.api.connection.ProxiedPlayer;
-import net.md_5.bungee.api.event.ServerConnectEvent.Reason;
 import net.md_5.bungee.api.plugin.Plugin;
 
 import java.net.InetSocketAddress;
-import java.util.Iterator;
 import java.util.List;
 
 import org.skunion.smallru8.BungeeDynamicSync.docker.MainController;

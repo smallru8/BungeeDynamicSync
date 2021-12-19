@@ -2,7 +2,6 @@ package org.skunion.smallru8.BungeeDynamicSync;
 
 import com.imaginarycode.minecraft.redisbungee.events.PubSubMessageEvent;
 
-import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 
