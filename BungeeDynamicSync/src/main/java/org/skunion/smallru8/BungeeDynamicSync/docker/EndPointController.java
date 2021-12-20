@@ -128,14 +128,19 @@ public class EndPointController {
 	
 	/**
 	 * Create a container
-	 * TODO pass Redis login info by ENV
+	 * pass Redis login info by ENV
 	 * @param dynamic_server
 	 * @return Container's name or null if create failed
 	 */
 	public String createContainer(String dynamic_server) {
 		if(!LOCK) {
 			String name = dynamic_server+"_"+SHA.SHA1(dynamic_server+random.nextInt());
-			String json_raw = getCreateJson_RAW(BungeeDynamicSync.CONFIG.getServerConfig().getSection(dynamic_server).getString("ContainerCreateScript")).replace("$TYPE", dynamic_server).replace("$CT_NAME",name);
+			String json_raw = getCreateJson_RAW(BungeeDynamicSync.CONFIG.getServerConfig().getSection(dynamic_server).getString("ContainerCreateScript"))
+					.replace("$TYPE", dynamic_server)
+					.replace("$CT_NAME",name)
+					.replace("$REDIS_IP_VALUE", BungeeDynamicSync.CONFIG.redis_config.getString("redis-server"))
+					.replace("$REDIS_PORT_VALUE", BungeeDynamicSync.CONFIG.redis_config.getString("redis-port"))
+					.replace("$REDIS_PASSWD_VALUE", BungeeDynamicSync.CONFIG.redis_config.getString("redis-password"));
 			String url = portainerAuth.getURL(endPointId)+"containers/create?name="+name;
 			
 			try {
