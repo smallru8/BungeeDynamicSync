@@ -2,9 +2,13 @@ package org.skunion.smallru8.BungeeDynamicSync;
 
 import java.util.concurrent.TimeUnit;
 
+import com.google.common.io.ByteArrayDataInput;
+import com.google.common.io.ByteStreams;
 import com.imaginarycode.minecraft.redisbungee.events.PubSubMessageEvent;
 
 import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.md_5.bungee.api.event.PluginMessageEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 
@@ -39,6 +43,22 @@ public class MessageHandle implements Listener{
 			
 			
 		}
+	}
+	
+	@EventHandler
+	public void on(PluginMessageEvent event) {
+		if (!event.getTag().equalsIgnoreCase(BungeeDynamicSync.PLUGIN_MSG_CHANNEL))
+            return;
+		ByteArrayDataInput in = ByteStreams.newDataInput(event.getData());
+        String subChannel = in.readUTF();
+        String cmd = in.readUTF();
+        if(subChannel.equalsIgnoreCase("Connect")&&cmd.equalsIgnoreCase("hub")) {
+        	if (event.getReceiver() instanceof ProxiedPlayer)
+            {
+                ProxiedPlayer receiver = (ProxiedPlayer) event.getReceiver();
+                BungeeDynamicSync.sendPlayertoHub(receiver);
+            }
+        }
 	}
 	
 	public void sendPubSubMessage(String message) {

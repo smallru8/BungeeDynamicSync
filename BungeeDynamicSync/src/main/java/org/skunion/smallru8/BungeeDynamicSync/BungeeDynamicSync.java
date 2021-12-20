@@ -1,11 +1,15 @@
 package org.skunion.smallru8.BungeeDynamicSync;
 
+import net.md_5.bungee.api.Callback;
 import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.config.ServerInfo;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
 
 import java.net.InetSocketAddress;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -25,6 +29,7 @@ public class BungeeDynamicSync extends Plugin implements Runnable{
 	public static Config CONFIG;
 	public static RedisBungeeAPI REDIS_API;
 	public static final String PUB_SUB_CHANNEL = "BDS_MESSAGE";
+	public static final String PLUGIN_MSG_CHANNEL = "BDS:channel";
 	public static String SERVER_ID = "";
 	
 	public static MainController CONTROLLER;
@@ -39,6 +44,7 @@ public class BungeeDynamicSync extends Plugin implements Runnable{
 	@Override
 	public void onEnable() {
 		BDS = this;
+		getProxy().registerChannel(PLUGIN_MSG_CHANNEL);
 		REDIS_API = RedisBungee.getApi();
 		REDIS_API.registerPubSubChannels(PUB_SUB_CHANNEL);
 		SERVER_ID = REDIS_API.getServerId();
@@ -105,6 +111,25 @@ public class BungeeDynamicSync extends Plugin implements Runnable{
 	
 	public static boolean isMaster() {
 		return MASTER.equals(SERVER_ID);
+	}
+	
+	public static void sendPlayertoHub(ProxiedPlayer player) {
+		Iterator<String> hub_it = ProxyServer.getInstance().getConfigurationAdapter().getListeners().iterator().next().getServerPriority().iterator();
+		sendPlayertoHub(player,hub_it);
+	}
+	
+	public static void sendPlayertoHub(ProxiedPlayer player,Iterator<String> hub_it) {
+		if(hub_it.hasNext()&&player.isConnected()) {
+			player.connect(ProxyServer.getInstance().getServerInfo(hub_it.next()),new Callback<Boolean>() {
+				@Override
+				public void done(Boolean result, Throwable error) {
+					if(!result)
+						sendPlayertoHub(player,hub_it);
+				}
+			});
+		}else {
+			player.disconnect(new TextComponent("Unable to connect hub."));
+		}
 	}
 	
 }
