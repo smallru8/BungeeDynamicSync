@@ -8,13 +8,13 @@ import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.skunion.smallru8.BungeeDynamicSync.docker.MainController;
-import org.skunion.smallru8.BungeeDynamicSync.schedules.Clock;
 
 import com.imaginarycode.minecraft.redisbungee.*;
 
-public class BungeeDynamicSync extends Plugin{
+public class BungeeDynamicSync extends Plugin implements Runnable{
 	
 	public static BungeeDynamicSync BDS;
 	
@@ -32,7 +32,7 @@ public class BungeeDynamicSync extends Plugin{
 	//Room list
 	public static Map<ServerInfo,Boolean> ROOM_IS_STARTED = new HashMap<ServerInfo,Boolean>();//If a room is started
 	
-	private Clock jobClock;
+	public Integer taskId = null;
 	
 	@Override
 	public void onEnable() {
@@ -48,14 +48,18 @@ public class BungeeDynamicSync extends Plugin{
 		
 		CONTROLLER = new MainController();
 		
-		jobClock = new Clock();
-		jobClock.start();//Auto update current controller
-		
+		//Auto update current controller
+		taskId = ProxyServer.getInstance().getScheduler().schedule(this, this, 5, 25, TimeUnit.SECONDS).getId();
 	}
 	
 	@Override
 	public void onDisable() {
 		REDIS_API.unregisterPubSubChannels(PUB_SUB_CHANNEL);
+	}
+	
+	@Override
+	public void run() {
+		setMasterController();
 	}
 	
 	public static void setMasterController() {

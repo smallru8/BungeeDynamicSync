@@ -7,36 +7,25 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Queue;
-import java.util.TimeZone;
+import java.util.concurrent.TimeUnit;
 
 import org.json.JSONObject;
-import org.quartz.CronScheduleBuilder;
-import org.quartz.Job;
-import org.quartz.JobBuilder;
-import org.quartz.JobDetail;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
-import org.quartz.Scheduler;
-import org.quartz.SchedulerException;
-import org.quartz.Trigger;
-import org.quartz.TriggerBuilder;
-import org.quartz.impl.StdSchedulerFactory;
 import org.skunion.smallru8.BungeeDynamicSync.BungeeDynamicSync;
 import org.skunion.smallru8.util.Pair;
 
+import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.config.Configuration;
 
-public class MainController implements Job{
+public class MainController implements Runnable{
 
 	private ArrayList<PortainerAuth> portainers;
 	private ArrayList<EndPointController> endpoints;
 	private Queue<String> waitForCreate = new LinkedList<String>();
 	private Queue<String> waitForRemove = new LinkedList<String>();
 	
-	private Trigger queueProcessTri;
-	private JobDetail qJob;
-	private Scheduler qScheudler;
+	private Integer taskId1 = null,taskId2 = null;
+	private Runnable pingJob = new RemoveNoReplyServer();
 	
 	public MainController() {
 		//load data from CONFIG
@@ -68,27 +57,18 @@ public class MainController implements Job{
 				endpoints.add(endpoint);
 			});
 		});
-		//10 sec
-		queueProcessTri = TriggerBuilder.newTrigger().withIdentity("CheckProxyStatus").withSchedule(CronScheduleBuilder.cronSchedule("0/10 * * * * ? *").inTimeZone(TimeZone.getTimeZone("Asia/Taipei"))).build();
-		qJob = JobBuilder.newJob(MainController.class).build();
 		
-		try {
-			qScheudler = StdSchedulerFactory.getDefaultScheduler();
-			qScheudler.scheduleJob(qJob, queueProcessTri);
-		} catch (SchedulerException e) {
-			e.printStackTrace();
-		}
 	}
 	
 	/**
 	 * Pause this controller
 	 */
 	public void stop() {
-		try {
-			if(!qScheudler.isInStandbyMode())
-				qScheudler.pauseAll();
-		} catch (SchedulerException e) {
-			e.printStackTrace();
+		if(taskId1!=null&&taskId2!=null) {
+			ProxyServer.getInstance().getScheduler().cancel(taskId1);
+			ProxyServer.getInstance().getScheduler().cancel(taskId2);
+			taskId1 = null;
+			taskId2 = null;
 		}
 	}
 	
@@ -96,13 +76,9 @@ public class MainController implements Job{
 	 * Start this controller
 	 */
 	public void start() {
-		try {
-			if(qScheudler.isStarted())
-				qScheudler.resumeAll();
-			else
-				qScheudler.start();
-		} catch (SchedulerException e) {
-			e.printStackTrace();
+		if(taskId1==null&&taskId2==null) {
+			taskId1 = ProxyServer.getInstance().getScheduler().schedule(BungeeDynamicSync.BDS, this, 5, 10, TimeUnit.SECONDS).getId();
+			taskId2 = ProxyServer.getInstance().getScheduler().schedule(BungeeDynamicSync.BDS, pingJob, 5, 25, TimeUnit.SECONDS).getId();
 		}
 	}
 	
@@ -124,7 +100,7 @@ public class MainController implements Job{
 	}
 
 	@Override
-	public void execute(JobExecutionContext context) throws JobExecutionException {
+	public void run() {
 		////////////////////////////////////////////////////////////////////////////////////////////
 		//Process waitForRemove queue
 		if(waitForRemove.size()!=0) {
@@ -141,7 +117,6 @@ public class MainController implements Job{
 			}
 			
 		}
-		
 		
 		////////////////////////////////////////////////////////////////////////////////////////////
 		//Process waitForCreate queue
