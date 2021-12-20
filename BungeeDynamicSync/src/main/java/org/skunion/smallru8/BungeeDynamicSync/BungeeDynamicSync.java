@@ -14,6 +14,8 @@ import org.skunion.smallru8.BungeeDynamicSync.docker.MainController;
 
 import com.imaginarycode.minecraft.redisbungee.*;
 
+//TODO auto move config from resources
+
 public class BungeeDynamicSync extends Plugin implements Runnable{
 	
 	public static BungeeDynamicSync BDS;
