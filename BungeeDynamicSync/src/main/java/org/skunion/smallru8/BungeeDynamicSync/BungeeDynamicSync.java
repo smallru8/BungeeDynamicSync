@@ -101,10 +101,6 @@ public class BungeeDynamicSync extends Plugin implements Runnable{
 		ROOM_IS_STARTED.replace(ProxyServer.getInstance().getServerInfo(dynamic_server_name), b);
 	}
 	
-	public static boolean isGameStarted(String dynamic_server_name) {
-		return ROOM_IS_STARTED.get(ProxyServer.getInstance().getServerInfo(dynamic_server_name));
-	}
-	
 	public static boolean isMaster() {
 		return MASTER.equals(SERVER_ID);
 	}

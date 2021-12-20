@@ -129,7 +129,7 @@ public class MainController implements Runnable{
 			while(waitForCreate.size()!=0&&BungeeDynamicSync.isMaster()) {
 				int min = 2147483647;
 				for(int i=0;i<current.length;i++) {//find minimum
-					if(current[i]<min&&current[i]<endpoints.get(i).getMaxContainerLimit()) {
+					if(current[i]<min&&(current[i]<endpoints.get(i).getMaxContainerLimit()||endpoints.get(i).getMaxContainerLimit()<=0)) {
 						min = current[i];
 						index = i;
 					}
@@ -172,6 +172,8 @@ public class MainController implements Runnable{
 		dynServerTypes.forEach(type->{
 			int minCT = BungeeDynamicSync.CONFIG.getServerConfig().getSection(type).getInt("min");
 			int maxCT = BungeeDynamicSync.CONFIG.getServerConfig().getSection(type).getInt("max");
+			if(maxCT<=0)
+				maxCT = 2147483647;
 			Pair<Integer,Integer> p = currentRoom.get(type);
 			
 			while(p.first<minCT&&p.second<maxCT) {//free room not enough
