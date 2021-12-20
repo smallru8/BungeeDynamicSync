@@ -128,6 +128,7 @@ public class EndPointController {
 	
 	/**
 	 * Create a container
+	 * TODO pass Redis login info by ENV
 	 * @param dynamic_server
 	 * @return Container's name or null if create failed
 	 */

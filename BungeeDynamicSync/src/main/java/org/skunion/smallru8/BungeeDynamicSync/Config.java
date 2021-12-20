@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 
+import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;
 import net.md_5.bungee.config.YamlConfiguration;
@@ -15,16 +16,37 @@ import net.md_5.bungee.config.YamlConfiguration;
 public class Config {
 	
 	public Configuration config;
+	public Configuration redis_config; //TODO
 	
 	private File f_config;
 	private File f_dir_docker;
 	
 	public Config() {
-		File f_dir = new File("plugins/BungeeDynamicSync");
+		File f_dir = BungeeDynamicSync.BDS.getDataFolder();
+		File f_redis_conf = new File(ProxyServer.getInstance().getPluginManager().getPlugin("RedisBungee").getDataFolder(),"config.yml");
+		f_config = new File(f_dir,"config.yml");
+		if(!f_dir.exists()) {
+			f_dir.mkdir();
+			try {
+				f_config.createNewFile();
+				init();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}else {
+			try {
+				config = ConfigurationProvider.getProvider(YamlConfiguration.class).load(f_config);
+				redis_config = ConfigurationProvider.getProvider(YamlConfiguration.class).load(f_redis_conf);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		
 		f_dir_docker = new File(f_dir,"docker");
-		File f_docker = new File(f_dir_docker,"CreateContainer.json");
 		if(!f_dir_docker.exists())
 			f_dir_docker.mkdir();
+		File f_docker = new File(f_dir_docker,"CreateContainer.json");
+		
 		if(!f_docker.exists()) {
 			try {
 				f_docker.createNewFile();
@@ -41,22 +63,6 @@ public class Config {
 				br.close();
 				sr.close();
 				is.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-		f_config = new File(f_dir,"config.yml");
-		if(!f_dir.exists()) {
-			f_dir.mkdir();
-			try {
-				f_config.createNewFile();
-				init();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}else {
-			try {
-				config = ConfigurationProvider.getProvider(YamlConfiguration.class).load(f_config);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
