@@ -70,6 +70,7 @@ public class BungeeDynamicSync extends Plugin implements Runnable{
 		
 		if(!proxyId.equals(BungeeDynamicSync.MASTER)) {//Msater controller changed
 			BungeeDynamicSync.MASTER = proxyId;
+			ProxyServer.getInstance().getLogger().info("Change master controller to "+proxyId+".");
 			if(proxyId.equals(BungeeDynamicSync.SERVER_ID)) {//This Bungeecord is master controller now
 				BungeeDynamicSync.mseeageCtrl.sendPubSubMessage("CONTROLLER UPDATE "+proxyId);
 				CONTROLLER.start();

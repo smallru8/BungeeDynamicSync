@@ -121,12 +121,13 @@ public class MainController implements Runnable{
 		////////////////////////////////////////////////////////////////////////////////////////////
 		//Process waitForCreate queue
 		Integer[] current;
-		int index = 0,min = 2147483647;
+		int index = 0;
 		if(waitForCreate.size()!=0) {
 			current = new Integer[endpoints.size()];//Each endpoint's current container number
 			for(int i=0;i<endpoints.size();i++)
 				current[i] = endpoints.get(i).getTotalContainers();
 			while(waitForCreate.size()!=0&&BungeeDynamicSync.isMaster()) {
+				int min = 2147483647;
 				for(int i=0;i<current.length;i++) {//find minimum
 					if(current[i]<min&&current[i]<endpoints.get(i).getMaxContainerLimit()) {
 						min = current[i];
