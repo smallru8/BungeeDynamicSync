@@ -13,10 +13,6 @@ import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 
 public class MessageHandle implements Listener{
-
-	/*
-	 * TODO dynamic server開始後啟動白名單
-	 * */
 	
 	@EventHandler
 	public void onPubSubMessage(PubSubMessageEvent event) {

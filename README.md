@@ -14,5 +14,5 @@ Remove a dynamic server(broadcast by spigot dynamic server after game over): | S
 Game has started(broadcast by spigot dynamic server when game start):        | SERVER     | STARTED | <CONTAINER_NAME>      |
 
 ```  
-
+On game start, server will turn on white list
 When game over, server will send plugin message (channel: BDS:channel,Sender: player,data: Connect,data: hub) after bungeecord received, it will connect player to random hub
