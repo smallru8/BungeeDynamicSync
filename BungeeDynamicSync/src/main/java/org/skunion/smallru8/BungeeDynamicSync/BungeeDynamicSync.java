@@ -44,8 +44,6 @@ public class BungeeDynamicSync extends Plugin implements Runnable{
 		CONFIG = new Config();
 		
 		mseeageCtrl = new MessageHandle();
-		setMasterController();
-		
 		CONTROLLER = new MainController();
 		
 		//Auto update current controller
@@ -54,6 +52,7 @@ public class BungeeDynamicSync extends Plugin implements Runnable{
 	
 	@Override
 	public void onDisable() {
+		ProxyServer.getInstance().getScheduler().cancel(this);
 		REDIS_API.unregisterPubSubChannels(PUB_SUB_CHANNEL);
 	}
 	
