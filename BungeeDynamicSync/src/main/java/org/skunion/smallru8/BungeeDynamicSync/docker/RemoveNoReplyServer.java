@@ -15,7 +15,7 @@ import net.md_5.bungee.api.config.ServerInfo;
 public class RemoveNoReplyServer implements Runnable{
 
 	private static Map<String,Integer> NO_REPLY_SERVER = new HashMap<String,Integer>();
-	
+	//Remove and Send SERVER SYNC
 	@Override
 	public void run() {
 		Collection<String> dynServerTypes = BungeeDynamicSync.CONFIG.getServerConfig().getKeys();
@@ -49,6 +49,13 @@ public class RemoveNoReplyServer implements Runnable{
 				it.remove();
 			}
 		}
+		
+		//SYNC
+		for(Entry<ServerInfo,Boolean> e:BungeeDynamicSync.ROOM_IS_STARTED.entrySet()) {
+			if(!e.getValue())
+				BungeeDynamicSync.mseeageCtrl.sendSYNCMessage(e.getKey().getName(), e.getKey().getMotd());
+		}
+		
 	}
 
 }

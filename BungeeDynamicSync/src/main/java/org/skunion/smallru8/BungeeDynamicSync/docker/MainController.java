@@ -9,6 +9,7 @@ import java.util.Map.Entry;
 import java.util.Queue;
 import java.util.concurrent.TimeUnit;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.skunion.smallru8.BungeeDynamicSync.BungeeDynamicSync;
 import org.skunion.smallru8.util.Pair;
@@ -77,6 +78,7 @@ public class MainController implements Runnable{
 	 */
 	public void start() {
 		if(taskId1==null&&taskId2==null) {
+			syncPortainer();
 			taskId1 = ProxyServer.getInstance().getScheduler().schedule(BungeeDynamicSync.BDS, this, 5, 10, TimeUnit.SECONDS).getId();
 			taskId2 = ProxyServer.getInstance().getScheduler().schedule(BungeeDynamicSync.BDS, pingJob, 5, 25, TimeUnit.SECONDS).getId();
 		}
@@ -181,6 +183,27 @@ public class MainController implements Runnable{
 				p.first++;
 				p.second++;
 				createNewRoom(type);
+			}
+		});
+	}
+	
+	public void syncPortainer() {
+		endpoints.forEach(ep->{
+			JSONArray ja = ep.getContainerJsonArray();
+			for(int i=0;i<ja.length();i++) {
+				JSONObject jo = ja.getJSONObject(i);
+				String id = jo.getString("Id");
+				String ip = ep.getEndPointHostIP();
+				String port = "";
+				String type_motd = jo.getJSONObject("Labels").getString("BDStype");
+				JSONArray ports = jo.getJSONArray("Ports");
+		    	for(int j=0;j<ports.length();j++) {
+		    		if(ports.getJSONObject(j).getInt("PrivatePort")==25565&&ports.getJSONObject(j).getString("Type").equals("tcp")) {
+		    			port = ""+ports.getJSONObject(j).getInt("PublicPort");
+		    			break;
+		    		}
+		    	}
+		    	BungeeDynamicSync.addServertoList(id, ip, port, type_motd);
 			}
 		});
 	}

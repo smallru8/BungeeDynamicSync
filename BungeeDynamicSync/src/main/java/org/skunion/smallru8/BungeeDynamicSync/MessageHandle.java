@@ -82,4 +82,13 @@ public class MessageHandle implements Listener{
 		sendPubSubMessage("SERVER ADD "+container_id+" "+ip+" "+port+" "+motd);
 	}
 	
+	/**
+	 * send SYNC container message to hub 
+	 * @param container_id
+	 * @param motd
+	 */
+	public void sendSYNCMessage(String container_id,String motd) {
+		sendPubSubMessage("SERVER SYNC "+container_id+" "+motd);
+	}
+	
 }

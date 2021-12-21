@@ -12,10 +12,9 @@ Change master controller: 								                     | CONTROLLER | UPDATE  | 
 Add a new dynamic server(broadcast by master controller):                    | SERVER     | ADD     | <CONTAINER_NAME>      | <ip> | <port> | <motd> |
 Remove a dynamic server(broadcast by spigot dynamic server after game over): | SERVER     | DEL     | <CONTAINER_NAME>      |
 Game has started(broadcast by spigot dynamic server when game start):        | SERVER     | STARTED | <CONTAINER_NAME>      |
-
+Sync dynamic server list: | SERVER | SYNC | <CONTAINER_NAME> | <motd> |
 ```  
 On game start, server will turn on white list
 When game over, server will send plugin message (channel: BDS:channel,Sender: player,data: Connect,data: hub) after bungeecord received, it will connect player to random hub
 
 server save serverName:(current player/max player) to redis
-add server name to Redis list : DynServer

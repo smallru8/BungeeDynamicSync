@@ -200,6 +200,10 @@ public class EndPointController {
 		return rets;
 	}
 	
+	public String getEndPointHostIP() {
+		return endPointHostIP;
+	}
+	
 	/**
 	 * Remove container from portainer.
 	 * @param id container id or name

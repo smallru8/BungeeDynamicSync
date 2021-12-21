@@ -36,6 +36,7 @@ public class BungeeDynamicSync extends Plugin implements Runnable{
 	
 	public static MessageHandle mseeageCtrl;
 	
+	//TODO broadcast this to hub
 	//Room list
 	public static Map<ServerInfo,Boolean> ROOM_IS_STARTED = new HashMap<ServerInfo,Boolean>();//If a room is started
 	
@@ -91,8 +92,10 @@ public class BungeeDynamicSync extends Plugin implements Runnable{
 	public static void addServertoList(String dynamic_server_name,String ip,String port,String motd) {
 		InetSocketAddress address = new InetSocketAddress(ip,Integer.parseInt(port));
 		ServerInfo serverInfo = ProxyServer.getInstance().constructServerInfo(dynamic_server_name, address, motd, false);
-		ProxyServer.getInstance().getServers().put(dynamic_server_name,serverInfo);
-		ROOM_IS_STARTED.put(serverInfo, false);
+		if(!ProxyServer.getInstance().getServers().containsKey(dynamic_server_name)) {
+			ProxyServer.getInstance().getServers().put(dynamic_server_name,serverInfo);
+			ROOM_IS_STARTED.put(serverInfo, false);
+		}
 	}
 	
 	public static void delServerfromList(String dynamic_server_name) {
