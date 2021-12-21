@@ -110,6 +110,7 @@ public class MainController implements Runnable{
 					if(endpoints.get(i).removeContainer(name, true)) {
 						BungeeDynamicSync.mseeageCtrl.sendDELMessage(name);//Tell others remove 
 						BungeeDynamicSync.delServerfromList(name);
+						
 						break;
 					}
 				}
